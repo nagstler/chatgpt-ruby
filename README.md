@@ -1,4 +1,6 @@
-# ChatGPTRuby
+# ChatGPT Ruby
+
+[![Gem Version](https://badge.fury.io/rb/chatgpt-ruby.svg)](https://badge.fury.io/rb/chatgpt-ruby) [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 The `chatgpt-ruby` is a Ruby SDK for the OpenAI API, including methods for generating text, completing prompts, and more.
 
