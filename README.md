@@ -1,46 +1,161 @@
 # ChatGPTRuby
 
-The `chatgpt-ruby` gem is a simple Ruby SDK for accessing the OpenAI ChatGPT API. This client makes it easy to integrate the ChatGPT API into your Ruby applications.
+The `chatgpt-ruby` is a Ruby SDK for the OpenAI API, including methods for generating text, completing prompts, and more.
 
-### Bundler
+## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "chatgpt-ruby"
+gem 'chatgpt-ruby'
 ```
+
+
 
 And then execute:
 
+```ruby
 $ bundle install
+```
 
-### Gem install
 
-Or install with:
 
+Or install it yourself as:
+
+```ruby
 $ gem install chatgpt-ruby
+```
 
 ## Usage
 
-To use the gem in a Ruby script or application, simply require it and initialize the client:
-```ruby
-require 'chatgpt_client'
+To use the ChatGPT API SDK, you will need an API key from OpenAI. You can obtain an API key by signing up for the [OpenAI API beta program](https://beta.openai.com/signup/) .
 
-client = ChatGPTClient::Client.new('your_api_key')
-response = client.chat('Please translate the following English text to French: "Hello, how are you?"')
-puts response
+Once you have an API key, you can create a new `ChatGPT::Client` instance with your API key:
+
+```ruby
+require 'chatgpt_api'
+
+api_key = 'your-api-key'
+client = ChatGPT::Client.new(api_key)
 ```
 
-Replace 'your_api_key' with your actual ChatGPT API key.
 
-### Parameters
+### Completions
 
-The `chat` method accepts a mandatory `prompt` parameter and an optional `options` parameter.
+To generate completions given a prompt, you can use the `completions` method:
 
-The `prompt` parameter is a string representing the input you want to send to the ChatGPT API.
+```ruby
+prompt = 'Hello, my name is'
+completions = client.completions(prompt)
 
-The `options` parameter is a hash that can include the following keys: 
-- `max_tokens`: The maximum number of tokens
+# Output: an array of completion strings
+```
+
+
+
+You can customize the generation process by passing in additional parameters as a hash:
+
+```ruby
+params = {
+  engine: 'text-davinci-002',
+  max_tokens: 50,
+  temperature: 0.7
+}
+completions = client.completions(prompt, params)
+
+# Output: an array of completion strings
+```
+
+
+### Search
+
+To perform a search query given a set of documents and a search query, you can use the `search` method:
+
+```ruby
+documents = ['Document 1', 'Document 2', 'Document 3']
+query = 'Search query'
+results = client.search(documents, query)
+
+# Output: an array of search result objects
+```
+
+
+
+You can customize the search process by passing in additional parameters as a hash:
+
+```ruby
+params = {
+  engine: 'ada',
+  max_rerank: 100
+}
+results = client.search(documents, query, params)
+
+# Output: an array of search result objects
+```
+
+
+### Classify
+
+To classify a given text, you can use the `classify` method:
+
+```ruby
+text = 'This is a sample text'
+label = client.classify(text)
+
+# Output: a string representing the classified label
+```
+
+
+
+You can customize the classification process by passing in additional parameters as a hash:
+
+```ruby
+params = {
+  model: 'text-davinci-002'
+}
+label = client.classify(text, params)
+
+# Output: a string representing the classified label
+```
+
+
+### Generate Summaries
+
+To generate summaries given a set of documents, you can use the `generate_summaries` method:
+
+```ruby
+documents = ['Document 1', 'Document 2', 'Document 3']
+summary = client.generate_summaries(documents)
+
+# Output: a string representing the generated summary
+```
+
+
+
+You can customize the summary generation process by passing in additional parameters as a hash:
+
+```ruby
+params = {
+  model: 'text-davinci-002',
+  max_tokens: 100
+}
+summary = client.generate_summaries(documents, params)
+
+# Output: a string representing the generated summary
+```
+
+
+### Generate Answers
+
+To generate answers given a prompt and a set of documents, you can use the `generate_answers` method:
+
+```ruby
+prompt = 'What is the capital of France?'
+documents = ['France is a country in Europe', 'Paris is the capital of France']
+answer = client.generate_answers(prompt, documents)
+
+# Output
+```
 
 ## Development
 
