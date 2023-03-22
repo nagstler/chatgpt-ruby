@@ -11,5 +11,4 @@ gem "minitest", "~> 5.0"
 
 gem "rubocop", "~> 1.21"
 
-gem 'httparty'
-gem 'json'
+gem 'rest-client'
