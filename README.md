@@ -33,7 +33,7 @@ To use the ChatGPT API SDK, you will need an API key from OpenAI. You can obtain
 Once you have an API key, you can create a new `ChatGPT::Client` instance with your API key:
 
 ```ruby
-require 'chatgpt_api'
+require 'chatgpt/client'
 
 api_key = 'your-api-key'
 client = ChatGPT::Client.new(api_key)
