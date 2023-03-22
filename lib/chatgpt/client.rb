@@ -93,7 +93,10 @@ module ChatGPT
       JSON.parse(response.body)['choices'][0]['text']
     end
 
-    def generate_answers(prompt, documents, model: 'text-davinci-002', max_tokens: 5)
+    def generate_answers(prompt, documents, params = {})
+      model = params[:model] || 'text-davinci-002'
+      max_tokens = params[:max_tokens] || 5
+
       url = "#{@endpoint}/engines/#{model}/answers"
       headers = {
         'Content-Type' => 'application/json',
