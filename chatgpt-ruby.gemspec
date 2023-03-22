@@ -4,7 +4,7 @@ require_relative "lib/chatgpt/ruby/version"
 
 Gem::Specification.new do |spec|
   spec.name = "chatgpt-ruby"
-  spec.version = '0.5.0' #Chatgpt::Ruby::VERSION
+  spec.version = Chatgpt::Ruby::VERSION
   spec.authors = ["Nagendra Dhanakeerthi"]
   spec.email = ["nagendra.dhanakeerthi@gmail.com"]
 
