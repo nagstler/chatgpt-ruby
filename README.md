@@ -1,22 +1,46 @@
-# Chatgpt::Ruby
+# ChatGPTRuby
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/chatgpt/ruby`. To experiment with that code, run `bin/console` for an interactive prompt.
+The `chatgpt-ruby` gem is a simple Ruby SDK for accessing the OpenAI ChatGPT API. This client makes it easy to integrate the ChatGPT API into your Ruby applications.
 
-TODO: Delete this and the text above, and describe your gem
+### Bundler
 
-## Installation
+Add this line to your application's Gemfile:
 
-Install the gem and add to the application's Gemfile by executing:
+```ruby
+gem "chatgpt-ruby"
+```
 
-    $ bundle add chatgpt-ruby
+And then execute:
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+$ bundle install
 
-    $ gem install chatgpt-ruby
+### Gem install
+
+Or install with:
+
+$ gem install chatgpt-ruby
 
 ## Usage
 
-TODO: Write usage instructions here
+To use the gem in a Ruby script or application, simply require it and initialize the client:
+```ruby
+require 'chatgpt_client'
+
+client = ChatGPTClient::Client.new('your_api_key')
+response = client.chat('Please translate the following English text to French: "Hello, how are you?"')
+puts response
+```
+
+Replace 'your_api_key' with your actual ChatGPT API key.
+
+### Parameters
+
+The `chat` method accepts a mandatory `prompt` parameter and an optional `options` parameter.
+
+The `prompt` parameter is a string representing the input you want to send to the ChatGPT API.
+
+The `options` parameter is a hash that can include the following keys: 
+- `max_tokens`: The maximum number of tokens
 
 ## Development
 
