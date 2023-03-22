@@ -1,4 +1,4 @@
-# lib/chatgpt_api.rb
+# lib/chatgpt/client.rb
 
 require 'rest-client'
 require 'json'
