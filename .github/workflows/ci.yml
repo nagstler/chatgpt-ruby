@@ -1,6 +1,8 @@
 name: CI
 on: [push]
 env:
+  CI: true
+  COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
   API_KEY: ${{ secrets.API_KEY }}
 jobs:
   test:
@@ -20,12 +22,7 @@ jobs:
         bundle install --jobs 4 --retry 3
     - name: Run tests
       run: bundle exec rake test
-
-- name: Coveralls
-  env:
-    CI: true
-    COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-  run: |
-    bundle exec rake coveralls:push
+    - name: Coveralls
+      run: bundle exec rake coveralls:push
 
 
