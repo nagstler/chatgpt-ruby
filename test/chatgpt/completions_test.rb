@@ -3,7 +3,7 @@ require 'chatgpt/client'
 
 class TestChatGPTCompletions < Minitest::Test
   def setup
-    api_key = 'YOUR_API_KEY'
+    api_key = ENV['API_KEY']
     @client = ChatGPT::Client.new(api_key)
   end
 
