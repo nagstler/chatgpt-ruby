@@ -3,6 +3,10 @@
 require "bundler/gem_tasks"
 require "rake/testtask"
 
+require 'coveralls/rake/task'
+Coveralls::RakeTask.new
+
+
 Rake::TestTask.new(:test) do |t|
   t.libs << "test"
   t.pattern = 'test/**/*_test.rb'
@@ -15,3 +19,4 @@ require "rubocop/rake_task"
 RuboCop::RakeTask.new
 
 task default: %i[test rubocop]
+

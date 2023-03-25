@@ -2,6 +2,7 @@ name: CI
 on: [push]
 env:
   API_KEY: ${{ secrets.API_KEY }}
+  COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -18,6 +19,6 @@ jobs:
       run: |
         gem install bundler
         bundle install --jobs 4 --retry 3
-    - name: Run tests
-      run: bundle exec rake test
+    - name: Run tests with coverage
+      run: bundle exec rake test_with_coveralls
 
