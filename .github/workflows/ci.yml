@@ -20,9 +20,7 @@ jobs:
       run: |
         gem install bundler
         bundle install --jobs 4 --retry 3
-    - name: Run tests
-      run: bundle exec rake test
-    - name: Coveralls
-      run: bundle exec rake coveralls:push
+    - name: Run tests with code coverage
+      run: bundle exec rake test coveralls:push
 
 
