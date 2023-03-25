@@ -13,4 +13,5 @@ gem "rubocop", "~> 1.21"
 
 gem 'rest-client'
 
-gem 'coveralls'
+gem 'coveralls', require: false
+
