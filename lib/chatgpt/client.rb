@@ -29,8 +29,13 @@ module ChatGPT
         top_p: top_p,
         n: n
       }
-      response = RestClient.post(url, data.to_json, headers)
-      JSON.parse(response.body)
+      begin
+        response = RestClient.post(url, data.to_json, headers)
+        JSON.parse(response.body)
+      rescue RestClient::ExceptionWithResponse => e
+        error_msg = JSON.parse(e.response.body)['error']['message']
+        raise RestClient::ExceptionWithResponse.new("#{e.message}: #{error_msg} (#{e.http_code})"), nil, e.backtrace
+      end
     end
 
     def search(documents, query, params = {})
