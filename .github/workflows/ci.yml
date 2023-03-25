@@ -21,6 +21,6 @@ jobs:
         gem install bundler
         bundle install --jobs 4 --retry 3
     - name: Run tests with code coverage
-      run: bundle exec rake test coveralls:push
+      run: COVERAGE=true bundle exec rake test
 
 
