@@ -2,7 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/chatgpt-ruby.svg)](https://badge.fury.io/rb/chatgpt-ruby) [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Maintainability](https://api.codeclimate.com/v1/badges/08c7e7b58e9fbe7156eb/maintainability)](https://codeclimate.com/github/nagstler/chatgpt-ruby/maintainability) [![Coverage Status](https://coveralls.io/repos/github/nagstler/chatgpt-ruby/badge.svg?branch=main)](https://coveralls.io/github/nagstler/chatgpt-ruby?branch=main) [![CI](https://github.com/nagstler/chatgpt-ruby/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/nagstler/chatgpt-ruby/actions/workflows/ci.yml)
 
-The `chatgpt-ruby` is a Ruby SDK for the OpenAI API, including methods for generating text, completing prompts, and more.
+The `chatgpt-ruby` is a Ruby SDK for the OpenAI API, including methods for generating text, completing prompts, and more ❤️
 
 ## Installation
 
