@@ -5,6 +5,11 @@ require "chatgpt/ruby"
 
 require "minitest/autorun"
 
-require 'coveralls'
+# require 'coveralls'
 
-Coveralls.wear!
+require 'simplecov'
+require 'simplecov_json_formatter'
+
+# Coveralls.wear!
+
+

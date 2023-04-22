@@ -8,11 +8,6 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
-    coveralls_reborn (0.27.0)
-      simplecov (~> 0.22.0)
-      term-ansicolor (~> 1.7)
-      thor (~> 1.2)
-      tins (~> 1.32)
     docile (1.4.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
@@ -56,12 +51,6 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
-    sync (0.5.0)
-    term-ansicolor (1.7.1)
-      tins (~> 1.0)
-    thor (1.2.1)
-    tins (1.32.1)
-      sync
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8.2)
@@ -72,11 +61,12 @@ PLATFORMS
 
 DEPENDENCIES
   chatgpt-ruby!
-  coveralls_reborn
   minitest (~> 5.0)
   rake (~> 13.0)
   rest-client
   rubocop (~> 1.21)
+  simplecov
+  simplecov_json_formatter
 
 BUNDLED WITH
    2.3.26
