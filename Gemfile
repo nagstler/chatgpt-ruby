@@ -13,7 +13,5 @@ gem "rubocop", "~> 1.21"
 
 gem 'rest-client'
 
-# gem "coveralls_reborn"
-
 gem 'simplecov', require: false
 gem 'simplecov_json_formatter'

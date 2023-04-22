@@ -5,11 +5,10 @@ require "chatgpt/ruby"
 
 require "minitest/autorun"
 
-# require 'coveralls'
-
 require 'simplecov'
 require 'simplecov_json_formatter'
 
-# Coveralls.wear!
+  # Add more helper methods to be used by all tests here...
+  SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
 
 
