@@ -13,5 +13,9 @@ gem "rubocop", "~> 1.21"
 
 gem 'rest-client'
 
-gem 'simplecov', require: false
-gem 'simplecov_json_formatter'
+group :test do
+    gem 'simplecov', require: false
+    gem 'simplecov_json_formatter', require: false
+    gem 'codeclimate-test-reporter', require: false
+end
+  

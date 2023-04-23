@@ -7,8 +7,5 @@ require "minitest/autorun"
 
 require 'simplecov'
 require 'simplecov_json_formatter'
-
-  # Add more helper methods to be used by all tests here...
-  SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
-
+require 'codeclimate-test-reporter'
 

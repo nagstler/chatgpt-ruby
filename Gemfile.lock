@@ -8,6 +8,8 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
+    codeclimate-test-reporter (1.0.7)
+      simplecov
     docile (1.4.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
@@ -61,6 +63,7 @@ PLATFORMS
 
 DEPENDENCIES
   chatgpt-ruby!
+  codeclimate-test-reporter
   minitest (~> 5.0)
   rake (~> 13.0)
   rest-client
