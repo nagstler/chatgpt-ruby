@@ -8,7 +8,12 @@ require "minitest/autorun"
 require 'simplecov'
 require 'simplecov-json'
 
-SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
+SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new([
+  SimpleCov::Formatter::HTMLFormatter,
+  SimpleCov::Formatter::JSONFormatter
+])
+
 SimpleCov.start
+
 
 
