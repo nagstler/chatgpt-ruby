@@ -10,6 +10,15 @@ module ChatGPT
       @endpoint = 'https://api.openai.com/v1'
     end
 
+    # Helper method to prepare headers
+    def headers
+      {
+        'Content-Type' => 'application/json',
+        'Authorization' => "Bearer #{@api_key}"
+      }
+    end
+
+    # Completion-related methods
     def completions(prompt, params = {})
       engine = params[:engine] || 'text-davinci-002'
       max_tokens = params[:max_tokens] || 16
@@ -18,10 +27,6 @@ module ChatGPT
       n = params[:n] || 1
 
       url = "#{@endpoint}/engines/#{engine}/completions"
-      headers = {
-        'Content-Type' => 'application/json',
-        'Authorization' => "Bearer #{@api_key}"
-      }
       data = {
         prompt: prompt,
         max_tokens: max_tokens,
@@ -29,49 +34,38 @@ module ChatGPT
         top_p: top_p,
         n: n
       }
-      begin
-        response = RestClient.post(url, data.to_json, headers)
-        JSON.parse(response.body)
-      rescue RestClient::ExceptionWithResponse => e
-        error_msg = JSON.parse(e.response.body)['error']['message']
-        raise RestClient::ExceptionWithResponse.new("#{e.message}: #{error_msg} (#{e.http_code})"), nil, e.backtrace
-      end
+      request_api(url, data)
     end
 
+    # Search-related methods
     def search(documents, query, params = {})
       engine = params[:engine] || 'ada'
       max_rerank = params[:max_rerank] || 200
 
       url = "#{@endpoint}/engines/#{engine}/search"
-      headers = {
-        'Content-Type' => 'application/json',
-        'Authorization' => "Bearer #{@api_key}"
-      }
       data = {
         documents: documents,
         query: query,
         max_rerank: max_rerank
       }
-      response = RestClient.post(url, data.to_json, headers)
-      JSON.parse(response.body)['data']
+      response = request_api(url, data)
+      response['data']
     end
 
+    # Classification-related methods
     def classify(text, params = {})
       model = params[:model] || 'text-davinci-002'
 
       url = "#{@endpoint}/classifications/#{model}"
-      headers = {
-        'Content-Type' => 'application/json',
-        'Authorization' => "Bearer #{@api_key}"
-      }
       data = {
         model: model,
         input: text
       }
-      response = RestClient.post(url, data.to_json, headers)
-      JSON.parse(response.body)['data'][0]['label']
+      response = request_api(url, data)
+      response['data'][0]['label']
     end
 
+    # Summary-related methods
     def generate_summaries(documents, params = {})
       model = params[:model] || 'text-davinci-002'
       max_tokens = params[:max_tokens] || 60
@@ -81,10 +75,6 @@ module ChatGPT
       presence_penalty = params[:presence_penalty] || 0.0
 
       url = "#{@endpoint}/engines/#{model}/generate"
-      headers = {
-        'Content-Type' => 'application/json',
-        'Authorization' => "Bearer #{@api_key}"
-      }
       data = {
         prompt: '',
         max_tokens: max_tokens,
@@ -94,26 +84,36 @@ module ChatGPT
         presence_penalty: presence_penalty,
         documents: documents
       }
-      response = RestClient.post(url, data.to_json, headers)
-      JSON.parse(response.body)['choices'][0]['text']
+      response = request_api(url, data)
+      response['choices'][0]['text']
     end
 
+    # Answer-generation-related methods
     def generate_answers(prompt, documents, params = {})
       model = params[:model] || 'text-davinci-002'
       max_tokens = params[:max_tokens] || 5
 
       url = "#{@endpoint}/engines/#{model}/answers"
-      headers = {
-        'Content-Type' => 'application/json',
-        'Authorization' => "Bearer #{@api_key}"
-      }
       data = {
         prompt: prompt,
         documents: documents,
         max_tokens: max_tokens
       }
-      response = RestClient.post(url, data.to_json, headers)
-      JSON.parse(response.body)['data'][0]['answer']
+      response = request_api(url, data)
+      response['data'][0]['answer']
+    end
+
+    private
+
+    # Helper method to make API requests
+    def request_api(url, data)
+      begin
+        response = RestClient.post(url, data.to_json, headers)
+        JSON.parse(response.body)
+      rescue RestClient::ExceptionWithResponse => e
+        error_msg = JSON.parse(e.response.body)['error']['message']
+        raise RestClient::ExceptionWithResponse.new("#{e.message}: #{error_msg} (#{e.http_code})"), nil, e.backtrace
+      end
     end
   end
 end
