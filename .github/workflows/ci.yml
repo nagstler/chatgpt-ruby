@@ -21,15 +21,11 @@ jobs:
         bundle install --jobs 4 --retry 3
     - name: Run tests with code coverage
       run: COVERAGE=true bundle exec rake test
-    - name: Install Code Climate Test Reporter
-      run: |
-        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-        chmod +x ./cc-test-reporter
-
-    - name: Push coverage data to Code Climate
-      env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+    - name: Run tests and submit coverage
       run: |
         ./cc-test-reporter before-build
+        bundle exec rake test
         ./cc-test-reporter after-build --exit-code $?
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
 

@@ -1,0 +1,8 @@
+version: "2"
+checks:
+  rubocop:
+    enabled: true
+    channel: "stable"
+plugins:
+  test-reporter:
+    enabled: true
