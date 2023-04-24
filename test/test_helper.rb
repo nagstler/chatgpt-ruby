@@ -6,6 +6,9 @@ require "chatgpt/ruby"
 require "minitest/autorun"
 
 require 'simplecov'
-require 'simplecov_json_formatter'
-require 'codeclimate-test-reporter'
+require 'simplecov-json'
+
+SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
+SimpleCov.start
+
 
