@@ -6,7 +6,7 @@ require "chatgpt/ruby"
 require "minitest/autorun"
 
 require 'simplecov'
-require 'simplecov-json'
+require 'simplecov_json_formatter'
 
 SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter,
@@ -14,6 +14,7 @@ SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new([
 ])
 
 SimpleCov.start
+
 
 
 

@@ -50,9 +50,6 @@ GEM
       simplecov-html (~> 0.11)
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
-    simplecov-json (0.2.3)
-      json
-      simplecov
     simplecov_json_formatter (0.1.4)
     unf (0.1.4)
       unf_ext
@@ -69,7 +66,7 @@ DEPENDENCIES
   rest-client
   rubocop (~> 1.21)
   simplecov
-  simplecov-json
+  simplecov_json_formatter
 
 BUNDLED WITH
    2.3.26
