@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    chatgpt-ruby (0.6.0)
+    chatgpt-ruby (1.0.0)
       rest-client
 
 GEM
