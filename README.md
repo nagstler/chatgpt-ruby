@@ -2,7 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/chatgpt-ruby.svg)](https://badge.fury.io/rb/chatgpt-ruby) [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Maintainability](https://api.codeclimate.com/v1/badges/08c7e7b58e9fbe7156eb/maintainability)](https://codeclimate.com/github/nagstler/chatgpt-ruby/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/08c7e7b58e9fbe7156eb/test_coverage)](https://codeclimate.com/github/nagstler/chatgpt-ruby/test_coverage) [![CI](https://github.com/nagstler/chatgpt-ruby/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/nagstler/chatgpt-ruby/actions/workflows/ci.yml) [![GitHub contributors](https://img.shields.io/github/contributors/nagstler/chatgpt-ruby)](https://github.com/nagstler/chatgpt-ruby/graphs/contributors)
 
-The `chatgpt-ruby` is a Ruby SDK for the OpenAI API, including methods for generating text, completing prompts, and more ❤️
+The `chatgpt-ruby` is a Ruby SDK for the OpenAI API, providing methods for generating text and completing prompts using the ChatGPT model.
 
 ## Installation
 
@@ -12,15 +12,11 @@ Add this line to your application's Gemfile:
 gem 'chatgpt-ruby'
 ```
 
-
-
 And then execute:
 
 ```ruby
 $ bundle install
 ```
-
-
 
 Or install it yourself as:
 
@@ -41,8 +37,39 @@ api_key = 'your-api-key'
 client = ChatGPT::Client.new(api_key)
 ```
 
+## Models
 
-### Completions
+With the ChatGPT Ruby SDK, you can list and retrieve information about the available models, such as GPT-4, GPT-3, and other models provided by OpenAI.
+### List Models
+
+To list all available models, you can use the `list_models` method:
+
+```ruby
+
+models = client.list_models
+
+# Output: an array of model objects, including information about GPT-4, GPT-3, and other models
+```
+
+Each model object in the array contains information about the model, such as its ID, name, description, and other attributes.
+### Retrieve Model
+
+To retrieve a specific model by its ID, you can use the `retrieve_model` method:
+
+```ruby
+
+model_id = 'text-gpt-4-001' # Replace with the desired model ID, e.g., 'text-gpt-3-001', 'text-davinci-002', etc.
+model = client.retrieve_model(id: model_id)
+
+# Output: a model object with detailed information about the requested model
+```
+
+The retrieved model object contains detailed information about the model, such as its ID, name, description, and other attributes.
+
+Keep in mind that the actual model names and IDs provided by OpenAI may change, and you should refer to the [OpenAI API documentation](https://beta.openai.com/docs/)  for the most up-to-date list of available models.
+
+
+## Completions
 
 To generate completions given a prompt, you can use the `completions` method:
 
@@ -52,8 +79,6 @@ completions = client.completions(prompt)
 
 # Output: an array of completion strings
 ```
-
-
 
 You can customize the generation process by passing in additional parameters as a hash:
 
@@ -66,97 +91,6 @@ params = {
 completions = client.completions(prompt, params)
 
 # Output: an array of completion strings
-```
-
-
-### Search
-
-To perform a search query given a set of documents and a search query, you can use the `search` method:
-
-```ruby
-documents = ['Document 1', 'Document 2', 'Document 3']
-query = 'Search query'
-results = client.search(documents, query)
-
-# Output: an array of search result objects
-```
-
-
-
-You can customize the search process by passing in additional parameters as a hash:
-
-```ruby
-params = {
-  engine: 'ada',
-  max_rerank: 100
-}
-results = client.search(documents, query, params)
-
-# Output: an array of search result objects
-```
-
-
-### Classify
-
-To classify a given text, you can use the `classify` method:
-
-```ruby
-text = 'This is a sample text'
-label = client.classify(text)
-
-# Output: a string representing the classified label
-```
-
-
-
-You can customize the classification process by passing in additional parameters as a hash:
-
-```ruby
-params = {
-  model: 'text-davinci-002'
-}
-label = client.classify(text, params)
-
-# Output: a string representing the classified label
-```
-
-
-### Generate Summaries
-
-To generate summaries given a set of documents, you can use the `generate_summaries` method:
-
-```ruby
-documents = ['Document 1', 'Document 2', 'Document 3']
-summary = client.generate_summaries(documents)
-
-# Output: a string representing the generated summary
-```
-
-
-
-You can customize the summary generation process by passing in additional parameters as a hash:
-
-```ruby
-params = {
-  model: 'text-davinci-002',
-  max_tokens: 100
-}
-summary = client.generate_summaries(documents, params)
-
-# Output: a string representing the generated summary
-```
-
-
-### Generate Answers
-
-To generate answers given a prompt and a set of documents, you can use the `generate_answers` method:
-
-```ruby
-prompt = 'What is the capital of France?'
-documents = ['France is a country in Europe', 'Paris is the capital of France']
-answer = client.generate_answers(prompt, documents)
-
-# Output
 ```
 
 ## Development
