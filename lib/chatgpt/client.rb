@@ -35,21 +35,6 @@ module ChatGPT
       request_api(url, data)
     end
 
-    # List models
-    def list_models
-      url = "#{@endpoint}/models"
-      response = request_api(url, {}, :get)
-      response['data']
-    end
-
-    # Retrieve a specific model
-    def retrieve_model(id)
-      url = "#{@endpoint}/models/#{id}"
-      response = request_api(url, {}, :get)
-      response['data']
-    end
-
-
     private
 
     # Helper method to make API requests
