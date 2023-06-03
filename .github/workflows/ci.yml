@@ -3,6 +3,7 @@ on: [push]
 env:
   CI: true
   API_KEY: ${{ secrets.API_KEY }}
+  CHATGPT_API_KEY: ${{ secrets.CHATGPT_API_KEY }}
 jobs:
   test:
     runs-on: ubuntu-latest
