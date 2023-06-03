@@ -58,6 +58,7 @@ params = {
 }
 completions = client.completions(prompt, params)
 
+puts completions["choices"].map { |c| c["text"] }
 # Output: an array of completion strings
 ```
 
