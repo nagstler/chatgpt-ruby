@@ -112,6 +112,10 @@ puts response['choices'][0]['message']['content'] # Outputs the assistant's new 
 
 With this method, you can build an ongoing conversation with the model.
 
+## Changelog
+
+For a detailed list of changes for each version of this project, please see the [CHANGELOG](CHANGELOG.md).
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
