@@ -52,6 +52,35 @@ module ChatGPT
       request_api(url, data)
     end
 
+
+    # This method sends a chat message to the API
+    #
+    # @param messages [Array<Hash>] The array of messages for the conversation. 
+    # Each message is a hash with a `role` and `content` key. The `role` key can be 'system', 'user', or 'assistant',
+    # and the `content` key contains the text of the message.
+    #
+    # @param params [Hash] Optional parameters for the chat request. This can include the 'model' key to specify 
+    # the model to be used for the chat. If no 'model' key is provided, 'gpt-3.5-turbo' is used by default.
+    #
+    # @return [Hash] The response from the API.
+    def chat(messages, params = {})
+      # Set default parameters
+      model = params[:model] || 'gpt-3.5-turbo'
+
+      # Construct the URL for the chat request
+      url = "#{@endpoint}/chat/completions"
+
+      # Prepare the data for the request. The data is a hash with 'model' and 'messages' keys.
+      data = {
+        model: model,
+        messages: messages
+      }
+      
+      # Make the API request and return the response.
+      request_api(url, data)
+    end
+
+
     private
     # Make a request to the API
     #

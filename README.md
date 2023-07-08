@@ -62,6 +62,56 @@ puts completions["choices"].map { |c| c["text"] }
 # Output: an array of completion strings
 ```
 
+## Chat
+
+The `chat` method allows for a dynamic conversation with the GPT model. It requires an array of messages where each message is a hash with two properties: `role` and `content`.
+
+`role` can be: 
+- `'system'`: Used for instructions that guide the conversation. 
+- `'user'`: Represents the user's input. 
+- `'assistant'`: Represents the model's output.
+
+`content` contains the text message from the corresponding role.
+
+Here is how you would start a chat:
+
+```ruby
+
+# Define the conversation messages
+messages = [
+  {
+    role: "system",
+    content: "You are a helpful assistant."
+  },
+  {
+    role: "user",
+    content: "Who won the world series in 2020?"
+  }
+]
+
+# Start a chat
+response = client.chat(messages)
+```
+
+The response will be a hash containing the model's message(s). You can extract the assistant's message like this:
+
+```ruby
+
+puts response['choices'][0]['message']['content'] # Outputs the assistant's message
+```
+
+The conversation can be continued by extending the `messages` array and calling the `chat` method again:
+
+```ruby
+
+messages << {role: "user", content: "Tell me more about it."}
+
+response = client.chat(messages)
+puts response['choices'][0]['message']['content'] # Outputs the assistant's new message
+```
+
+With this method, you can build an ongoing conversation with the model.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
