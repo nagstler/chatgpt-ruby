@@ -99,8 +99,9 @@ module ChatGPT
         # Parse and return the response body
         JSON.parse(response.body)
       rescue RestClient::ExceptionWithResponse => e
-        # Parse the error message from the API response
-        error_msg = JSON.parse(e.response.body)['error']['message']
+        error_msg = 'No error message'
+        # Parse the error message from the API response if there is a response
+        error_msg = JSON.parse(e.response.body)['error']['message'] if e.response
         
         # Raise an exception with the API error message
         raise RestClient::ExceptionWithResponse.new("#{e.message}: #{error_msg} (#{e.http_code})"), nil, e.backtrace
