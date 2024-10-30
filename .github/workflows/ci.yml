@@ -35,11 +35,18 @@ jobs:
         COVERAGE: true
         CHATGPT_API_KEY: 'test-key'
 
-    - name: Publish code coverage
-      uses: paambaati/codeclimate-action@v3.2.0
-      if: github.ref == 'refs/heads/main'
+    - name: Upload coverage to CodeClimate
+      if: github.ref == 'refs/heads/main' && matrix.ruby-version == '3.2'
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      run: |
+        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        chmod +x ./cc-test-reporter
+        ./cc-test-reporter before-build
+        ./cc-test-reporter after-build --exit-code $?
+
+    - name: Upload coverage artifacts
+      uses: actions/upload-artifact@v2
       with:
-        coverageCommand: bundle exec rake test
-        coverageLocations: ${{github.workspace}}/coverage/.resultset.json:simplecov
+        name: coverage-report
+        path: coverage
