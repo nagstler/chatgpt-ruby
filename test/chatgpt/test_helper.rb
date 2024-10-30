@@ -9,10 +9,10 @@ module TestHelper
         body: {
           choices: [
             {
-              text: "Sample response",
+              text: 'Sample response',
               index: 0,
               logprobs: nil,
-              finish_reason: "length"
+              finish_reason: 'length'
             }
           ],
           usage: {
@@ -21,7 +21,7 @@ module TestHelper
             total_tokens: 12
           }
         }.to_json,
-        headers: { "Content-Type" => "application/json" }
+        headers: { 'Content-Type' => 'application/json' }
       )
   end
 end

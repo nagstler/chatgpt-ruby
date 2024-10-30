@@ -1,10 +1,10 @@
 # lib/chatgpt.rb
 # frozen_string_literal: true
 
-require_relative "chatgpt/version"
-require_relative "chatgpt/errors"
-require_relative "chatgpt/configuration"
-require_relative "chatgpt/client"
+require_relative 'chatgpt/version'
+require_relative 'chatgpt/errors'
+require_relative 'chatgpt/configuration'
+require_relative 'chatgpt/client'
 
 module ChatGPT
   class << self
