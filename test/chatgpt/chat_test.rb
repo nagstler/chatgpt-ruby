@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 # test/chatgpt/chat_test.rb
-require 'test_helper'
+require "test_helper"
 
 class TestChatGPTChatIntegration < Minitest::Test
   include TestHelpers
 
   def setup
-    @api_key = 'test-key'
+    @api_key = "test-key"
     @client = ChatGPT::Client.new(@api_key)
   end
 
@@ -13,7 +15,7 @@ class TestChatGPTChatIntegration < Minitest::Test
     stub_chat_request
     messages = [{ role: "user", content: "Hello!" }]
     response = @client.chat(messages)
-    
+
     assert_equal 1, response["choices"].length
     assert response["choices"][0]["message"]["content"]
     assert_equal "assistant", response["choices"][0]["message"]["role"]
@@ -25,7 +27,7 @@ class TestChatGPTChatIntegration < Minitest::Test
       { role: "system", content: "You are a helpful assistant." },
       { role: "user", content: "Hello!" }
     ]
-    
+
     response = @client.chat(messages)
     assert response["choices"][0]["message"]["content"]
   end
@@ -34,7 +36,7 @@ class TestChatGPTChatIntegration < Minitest::Test
     stub_chat_request(temperature: 0.7)
     messages = [{ role: "user", content: "Hello!" }]
     response = @client.chat(messages, temperature: 0.7)
-    
+
     assert response["choices"][0]["message"]["content"]
   end
 
@@ -42,12 +44,12 @@ class TestChatGPTChatIntegration < Minitest::Test
     stub_chat_stream_request
     messages = [{ role: "user", content: "Hello!" }]
     chunks = []
-    
+
     @client.chat_stream(messages) do |chunk|
       chunks << chunk
     end
 
-    assert chunks.length > 0
+    assert chunks.length.positive?
     assert chunks.all? { |c| c["choices"][0]["delta"] }
   end
 

@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 # test/chatgpt/errors_test.rb
-require 'test_helper'
+require "test_helper"
 
 class TestChatGPTErrors < Minitest::Test
   def test_api_error_with_status_code

@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 # test/test_helper.rb
-require 'simplecov'
-require 'simplecov_json_formatter'
-require 'minitest/autorun'
-require 'webmock/minitest'
-require 'json'
+require "simplecov"
+require "simplecov_json_formatter"
+require "minitest/autorun"
+require "webmock/minitest"
+require "json"
 
 SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new([
-  SimpleCov::Formatter::HTMLFormatter,
-  SimpleCov::Formatter::JSONFormatter
-])
+                                                                  SimpleCov::Formatter::HTMLFormatter,
+                                                                  SimpleCov::Formatter::JSONFormatter
+                                                                ])
 
 SimpleCov.start
 
@@ -40,17 +42,17 @@ module TestHelpers
     }
 
     stub_request(:post, %r{https://api\.openai\.com/v1/engines/.*/completions})
-      .with(headers: { 'Authorization' => "Bearer #{@api_key}" })
+      .with(headers: { "Authorization" => "Bearer #{@api_key}" })
       .to_return(
         status: 200,
         body: response_body.to_json,
-        headers: { 'Content-Type' => 'application/json' }
+        headers: { "Content-Type" => "application/json" }
       )
   end
 
   def stub_error_request(status_code, error_message)
     stub_request(:post, %r{https://api\.openai\.com/v1/engines/.*/completions})
-      .with(headers: { 'Authorization' => "Bearer #{@api_key}" })
+      .with(headers: { "Authorization" => "Bearer #{@api_key}" })
       .to_return(
         status: status_code,
         body: {
@@ -60,7 +62,7 @@ module TestHelpers
             code: status_code
           }
         }.to_json,
-        headers: { 'Content-Type' => 'application/json' }
+        headers: { "Content-Type" => "application/json" }
       )
   end
 
@@ -88,11 +90,11 @@ module TestHelpers
     }
 
     stub_request(:post, "https://api.openai.com/v1/chat/completions")
-      .with(headers: { 'Authorization' => "Bearer #{@api_key}" })
+      .with(headers: { "Authorization" => "Bearer #{@api_key}" })
       .to_return(
         status: 200,
         body: response_body.to_json,
-        headers: { 'Content-Type' => 'application/json' }
+        headers: { "Content-Type" => "application/json" }
       )
   end
 
@@ -105,17 +107,17 @@ module TestHelpers
     ]
 
     stub_request(:post, "https://api.openai.com/v1/chat/completions")
-      .with(headers: { 'Authorization' => "Bearer #{@api_key}" })
+      .with(headers: { "Authorization" => "Bearer #{@api_key}" })
       .to_return(
         status: 200,
         body: chunks.map { |chunk| "data: #{chunk.to_json}\n\n" }.join + "data: [DONE]\n\n",
-        headers: { 'Content-Type' => 'text/event-stream' }
+        headers: { "Content-Type" => "text/event-stream" }
       )
   end
 
   def stub_chat_error_request(status_code, error_message)
     stub_request(:post, "https://api.openai.com/v1/chat/completions")
-      .with(headers: { 'Authorization' => "Bearer #{@api_key}" })
+      .with(headers: { "Authorization" => "Bearer #{@api_key}" })
       .to_return(
         status: status_code,
         body: {
@@ -125,7 +127,7 @@ module TestHelpers
             code: status_code
           }
         }.to_json,
-        headers: { 'Content-Type' => 'application/json' }
+        headers: { "Content-Type" => "application/json" }
       )
   end
 end

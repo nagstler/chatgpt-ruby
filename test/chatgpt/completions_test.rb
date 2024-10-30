@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 # test/chatgpt/completions_test.rb
-require 'test_helper'
+require "test_helper"
 
 class TestChatGPTCompletionsIntegration < Minitest::Test
   include TestHelpers
 
   def setup
-    @api_key = 'test-key'
+    @api_key = "test-key"
     @client = ChatGPT::Client.new(@api_key)
   end
 
@@ -25,7 +27,7 @@ class TestChatGPTCompletionsIntegration < Minitest::Test
       top_p: 0.9,
       n: 2
     }
-    
+
     response = @client.completions("Hello, my name is", custom_params)
     assert_equal 2, response["choices"].length
   end

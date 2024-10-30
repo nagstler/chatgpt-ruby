@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # lib/chatgpt/configuration.rb
 module ChatGPT
   class Configuration
@@ -5,8 +7,8 @@ module ChatGPT
                   :request_timeout, :max_retries, :default_parameters
 
     def initialize
-      @api_version = 'v1'
-      @default_engine = 'text-davinci-002'
+      @api_version = "v1"
+      @default_engine = "text-davinci-002"
       @request_timeout = 30
       @max_retries = 3
       @default_parameters = {

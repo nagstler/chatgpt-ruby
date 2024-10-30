@@ -11,13 +11,11 @@ gem "minitest", "~> 5.0"
 
 gem "rubocop", "~> 1.21"
 
-gem 'rest-client'
+gem "rest-client"
 
 # Gemfile
 group :test do
-    gem 'webmock'
-    gem 'simplecov'
-    gem 'simplecov_json_formatter'
-  end
-  
-  
+  gem "simplecov"
+  gem "simplecov_json_formatter"
+  gem "webmock"
+end
