@@ -74,8 +74,11 @@ GEM
       hashdiff (>= 0.4.0, < 2.0.0)
 
 PLATFORMS
+  arm64-darwin
   arm64-darwin-21
   arm64-darwin-22
+  x86_64-darwin
+  x86_64-linux
 
 DEPENDENCIES
   brakeman (~> 5.2)
@@ -83,7 +86,6 @@ DEPENDENCIES
   chatgpt-ruby!
   minitest (~> 5.0)
   rake (~> 13.0)
-  rest-client
   rubocop (~> 1.21)
   simplecov
   simplecov_json_formatter

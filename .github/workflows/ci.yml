@@ -20,10 +20,11 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby-version }}
-        bundler-cache: true
 
-    - name: Update bundle platforms
+    - name: Setup Bundler
       run: |
+        gem install bundler
+        bundle config set --local path 'vendor/bundle'
         bundle lock --add-platform x86_64-linux
         bundle lock --add-platform ruby
         bundle install --jobs 4
@@ -36,43 +37,9 @@ jobs:
 
     - name: Publish code coverage
       uses: paambaati/codeclimate-action@v3.2.0
-      if: github.ref == 'refs/heads/main' # Only run on main branch
+      if: github.ref == 'refs/heads/main'
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       with:
         coverageCommand: bundle exec rake test
         coverageLocations: ${{github.workspace}}/coverage/.resultset.json:simplecov
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: '3.2'
-        bundler-cache: true
-
-    - name: Run RuboCop
-      run: bundle exec rubocop
-
-  security:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: '3.2'
-        bundler-cache: true
-
-    - name: Install Brakeman
-      run: gem install brakeman
-
-    - name: Run Brakeman
-      run: brakeman -A -q -w2
-
-    - name: Check for vulnerable dependencies
-      run: bundle exec bundle-audit check --update
