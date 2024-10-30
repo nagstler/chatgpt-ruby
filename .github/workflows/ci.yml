@@ -46,7 +46,9 @@ jobs:
         ./cc-test-reporter after-build --exit-code $?
 
     - name: Upload coverage artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4  # Updated to v4
       with:
-        name: coverage-report
-        path: coverage
+        name: coverage-report-ruby-${{ matrix.ruby-version }}
+        path: coverage/
+        retention-days: 14  # Optional: specify how long to keep artifacts
+        if-no-files-found: error  # Optional: fail if no files are found
