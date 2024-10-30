@@ -13,9 +13,11 @@ gem "rubocop", "~> 1.21"
 
 gem 'rest-client'
 
+# Gemfile
 group :test do
-    gem 'simplecov', require: false
-    gem 'simplecov_json_formatter', require: false
-end
+    gem 'webmock'
+    gem 'simplecov'
+    gem 'simplecov_json_formatter'
+  end
   
   

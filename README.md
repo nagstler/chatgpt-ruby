@@ -1,135 +1,242 @@
 # ChatGPT Ruby
 
-[![Gem Version](https://badge.fury.io/rb/chatgpt-ruby.svg)](https://badge.fury.io/rb/chatgpt-ruby) [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Maintainability](https://api.codeclimate.com/v1/badges/08c7e7b58e9fbe7156eb/maintainability)](https://codeclimate.com/github/nagstler/chatgpt-ruby/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/08c7e7b58e9fbe7156eb/test_coverage)](https://codeclimate.com/github/nagstler/chatgpt-ruby/test_coverage) [![CI](https://github.com/nagstler/chatgpt-ruby/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/nagstler/chatgpt-ruby/actions/workflows/ci.yml)
+[![Gem Version](https://badge.fury.io/rb/chatgpt-ruby.svg)](https://badge.fury.io/rb/chatgpt-ruby)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Maintainability](https://api.codeclimate.com/v1/badges/08c7e7b58e9fbe7156eb/maintainability)](https://codeclimate.com/github/nagstler/chatgpt-ruby/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/08c7e7b58e9fbe7156eb/test_coverage)](https://codeclimate.com/github/nagstler/chatgpt-ruby/test_coverage)
+[![CI](https://github.com/nagstler/chatgpt-ruby/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/nagstler/chatgpt-ruby/actions/workflows/ci.yml)
 
-The `chatgpt-ruby` is a Ruby SDK for the OpenAI API, providing methods for generating text and completing prompts using the ChatGPT model.
+A comprehensive Ruby SDK for OpenAI's GPT APIs, providing a robust, feature-rich interface for AI-powered applications.
+
+## Features
+
+- 🚀 Full support for GPT-3.5-Turbo and GPT-4 models
+- 📡 Streaming responses support
+- 🔧 Function calling and JSON mode
+- 🎨 DALL-E image generation
+- 🔄 Fine-tuning capabilities
+- 📊 Token counting and validation
+- ⚡ Async operations support
+- 🛡️ Built-in rate limiting and retries
+- 🎯 Type-safe responses
+- 📝 Comprehensive logging
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+- [Core Features](#core-features)
+  - [Chat Completions](#chat-completions)
+  - [Function Calling](#function-calling)
+  - [Image Generation (DALL-E)](#image-generation-dall-e)
+  - [Fine-tuning](#fine-tuning)
+  - [Token Management](#token-management)
+  - [Error Handling](#error-handling)
+- [Advanced Usage](#advanced-usage)
+  - [Async Operations](#async-operations)
+  - [Batch Operations](#batch-operations)
+  - [Response Objects](#response-objects)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add to your Gemfile:
 
 ```ruby
 gem 'chatgpt-ruby'
 ```
 
-And then execute:
+Or install directly:
 
-```ruby
-$ bundle install
-```
-
-Or install it yourself as:
-
-```ruby
+```bash
 $ gem install chatgpt-ruby
 ```
 
-## Usage
-
-To use the ChatGPT API SDK, you will need an API key from OpenAI. You can obtain an API key by signing up for the [OpenAI API beta program](https://beta.openai.com/signup/) .
-
-Once you have an API key, you can create a new `ChatGPT::Client` instance with your API key:
+## Quick Start
 
 ```ruby
-require 'chatgpt/client'
+require 'chatgpt'
 
-api_key = 'your-api-key'
-client = ChatGPT::Client.new(api_key)
+# Initialize with API key
+client = ChatGPT::Client.new(api_key: 'your-api-key')
+
+# Simple chat completion
+response = client.chat(messages: [
+  { role: "user", content: "What is Ruby?" }
+])
+
+puts response.content
 ```
 
-## Completions
-
-To generate completions given a prompt, you can use the `completions` method:
+## Configuration
 
 ```ruby
-prompt = 'Hello, my name is'
-completions = client.completions(prompt)
-
-# Output: an array of completion strings
+ChatGPT.configure do |config|
+  config.api_key = 'your-api-key'
+  config.default_model = 'gpt-4'
+  config.timeout = 30
+  config.max_retries = 3
+  config.api_version = '2024-01'
+end
 ```
 
-You can customize the generation process by passing in additional parameters as a hash:
+## Core Features
+
+### Chat Completions
 
 ```ruby
-params = {
-  engine: 'text-davinci-002',
-  max_tokens: 50,
-  temperature: 0.7
-}
-completions = client.completions(prompt, params)
+# Basic chat
+client.chat(messages: [
+  { role: "system", content: "You are a helpful assistant." },
+  { role: "user", content: "Hello!" }
+])
 
-puts completions["choices"].map { |c| c["text"] }
-# Output: an array of completion strings
+# With streaming
+client.chat_stream(messages: [...]) do |chunk|
+  print chunk.content
+end
 ```
 
-## Chat
-
-The `chat` method allows for a dynamic conversation with the GPT model. It requires an array of messages where each message is a hash with two properties: `role` and `content`.
-
-`role` can be: 
-- `'system'`: Used for instructions that guide the conversation. 
-- `'user'`: Represents the user's input. 
-- `'assistant'`: Represents the model's output.
-
-`content` contains the text message from the corresponding role.
-
-Here is how you would start a chat:
+### Function Calling
 
 ```ruby
-
-# Define the conversation messages
-messages = [
+functions = [
   {
-    role: "system",
-    content: "You are a helpful assistant."
-  },
-  {
-    role: "user",
-    content: "Who won the world series in 2020?"
+    name: "get_weather",
+    description: "Get current weather",
+    parameters: {
+      type: "object",
+      properties: {
+        location: { type: "string" },
+        unit: { type: "string", enum: ["celsius", "fahrenheit"] }
+      }
+    }
   }
 ]
 
-# Start a chat
-response = client.chat(messages)
+response = client.chat(
+  messages: [{ role: "user", content: "What's the weather in London?" }],
+  functions: functions,
+  function_call: "auto"
+)
 ```
 
-The response will be a hash containing the model's message(s). You can extract the assistant's message like this:
+### Image Generation (DALL-E)
 
 ```ruby
+# Generate image
+image = client.images.generate(
+  prompt: "A sunset over mountains",
+  size: "1024x1024",
+  quality: "hd"
+)
 
-puts response['choices'][0]['message']['content'] # Outputs the assistant's message
+# Create variations
+variation = client.images.create_variation(
+  image: File.read("input.png"),
+  n: 1
+)
 ```
 
-The conversation can be continued by extending the `messages` array and calling the `chat` method again:
+### Fine-tuning
 
 ```ruby
+# Create fine-tuning job
+job = client.fine_tunes.create(
+  training_file: "file-abc123",
+  model: "gpt-3.5-turbo"
+)
 
-messages << {role: "user", content: "Tell me more about it."}
+# List fine-tuning jobs
+jobs = client.fine_tunes.list
 
-response = client.chat(messages)
-puts response['choices'][0]['message']['content'] # Outputs the assistant's new message
+# Get job status
+status = client.fine_tunes.retrieve(job.id)
 ```
 
-With this method, you can build an ongoing conversation with the model.
+### Token Management
 
-## Changelog
+```ruby
+# Count tokens
+count = client.tokens.count("Your text here", model: "gpt-4")
 
-For a detailed list of changes for each version of this project, please see the [CHANGELOG](CHANGELOG.md).
+# Validate token limits
+client.tokens.validate_messages(messages, max_tokens: 4000)
+```
+
+### Error Handling
+
+```ruby
+begin
+  response = client.chat(messages: [...])
+rescue ChatGPT::RateLimitError => e
+  puts "Rate limit hit: #{e.message}"
+rescue ChatGPT::APIError => e
+  puts "API error: #{e.message}"
+rescue ChatGPT::TokenLimitError => e
+  puts "Token limit exceeded: #{e.message}"
+end
+```
+
+## Advanced Usage
+
+### Async Operations
+
+```ruby
+client.async do
+  response1 = client.chat(messages: [...])
+  response2 = client.chat(messages: [...])
+  [response1, response2]
+end
+```
+
+### Batch Operations
+
+```ruby
+responses = client.batch do |batch|
+  batch.add_chat(messages: [...])
+  batch.add_chat(messages: [...])
+end
+```
+
+### Response Objects
+
+```ruby
+response = client.chat(messages: [...])
+
+response.content  # Main response content
+response.usage   # Token usage information
+response.finish_reason  # Why the response ended
+response.model   # Model used
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+```bash
+# Run tests
+bundle exec rake test
 
-To install this gem onto your local machine, run `bundle exec rake install`.
+# Run linter
+bundle exec rubocop
+
+# Generate documentation
+bundle exec yard doc
+```
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/nagstler/chatgpt-ruby. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/nagstler/chatgpt-ruby/blob/main/CODE_OF_CONDUCT.md).
+1. Fork it
+2. Create your feature branch (`git checkout -b feature/my-new-feature`)
+3. Add tests for your feature
+4. Make your changes
+5. Commit your changes (`git commit -am 'Add some feature'`)
+6. Push to the branch (`git push origin feature/my-new-feature`)
+7. Create a new Pull Request
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the Chatgpt::Ruby project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/nagstler/chatgpt-ruby/blob/main/CODE_OF_CONDUCT.md).
+Released under the MIT License. See [LICENSE](LICENSE.txt) for details.

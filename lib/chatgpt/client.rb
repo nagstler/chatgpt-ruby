@@ -1,112 +1,123 @@
+# lib/chatgpt/client.rb
 require 'rest-client'
 require 'json'
 
 module ChatGPT
   class Client
-    # Initialize the client with the API key
-    #
-    # @param api_key [String] The API key for the GPT-3 service
-    def initialize(api_key)
-      @api_key = api_key
-      # Base endpoint for the OpenAI API
+    def initialize(api_key = nil)
+      @api_key = api_key || ChatGPT.configuration.api_key
       @endpoint = 'https://api.openai.com/v1'
+      @config = ChatGPT.configuration
     end
 
-    # Prepare headers for the API request
-    #
-    # @return [Hash] The headers for the API request
-    def headers
-      {
-        'Content-Type' => 'application/json',
-        'Authorization' => "Bearer #{@api_key}"
-      }
-    end
-
-    # Generate completions based on a given prompt
-    #
-    # @param prompt [String] The prompt to be completed
-    # @param params [Hash] Additional parameters for the completion request
-    #
-    # @return [Hash] The completion results from the API
     def completions(prompt, params = {})
-      # Set default parameters
-      engine = params[:engine] || 'text-davinci-002'
-      max_tokens = params[:max_tokens] || 16
-      temperature = params[:temperature] || 0.5
-      top_p = params[:top_p] || 1.0
-      n = params[:n] || 1
-
-      # Construct the URL for the completion request
+      engine = params[:engine] || @config.default_engine
       url = "#{@endpoint}/engines/#{engine}/completions"
       
-      # Prepare the data for the request
-      data = {
+      data = @config.default_parameters.merge(
         prompt: prompt,
-        max_tokens: max_tokens,
-        temperature: temperature,
-        top_p: top_p,
-        n: n
-      }
-      
-      # Make the request to the API
+        max_tokens: params[:max_tokens],
+        temperature: params[:temperature],
+        top_p: params[:top_p],
+        n: params[:n]
+      ).compact
+
       request_api(url, data)
     end
 
-
-    # This method sends a chat message to the API
-    #
-    # @param messages [Array<Hash>] The array of messages for the conversation. 
-    # Each message is a hash with a `role` and `content` key. The `role` key can be 'system', 'user', or 'assistant',
-    # and the `content` key contains the text of the message.
-    #
-    # @param params [Hash] Optional parameters for the chat request. This can include the 'model' key to specify 
-    # the model to be used for the chat. If no 'model' key is provided, 'gpt-3.5-turbo' is used by default.
-    #
-    # @return [Hash] The response from the API.
     def chat(messages, params = {})
-      # Set default parameters
-      model = params[:model] || 'gpt-3.5-turbo'
-
-      # Construct the URL for the chat request
       url = "#{@endpoint}/chat/completions"
-
-      # Prepare the data for the request. The data is a hash with 'model' and 'messages' keys.
-      data = {
-        model: model,
-        messages: messages
-      }
       
-      # Make the API request and return the response.
+      data = @config.default_parameters.merge(
+        model: params[:model] || 'gpt-3.5-turbo',
+        messages: messages,
+        temperature: params[:temperature],
+        top_p: params[:top_p],
+        n: params[:n],
+        stream: params[:stream] || false
+      ).compact
+
       request_api(url, data)
     end
 
+    def chat_stream(messages, params = {}, &block)
+      raise ArgumentError, "Block is required for streaming" unless block_given?
+      
+      url = "#{@endpoint}/chat/completions"
+      data = @config.default_parameters.merge(
+        model: params[:model] || 'gpt-3.5-turbo',
+        messages: messages,
+        stream: true
+      ).compact
+
+      request_streaming(url, data, &block)
+    end
 
     private
-    # Make a request to the API
-    #
-    # @param url [String] The URL for the request
-    # @param data [Hash] The data to be sent in the request
-    # @param method [Symbol] The HTTP method for the request (:post by default)
-    #
-    # @return [Hash] The response from the API
-    #
-    # @raise [RestClient::ExceptionWithResponse] If the API request fails
-    def request_api(url, data, method = :post)
-      begin
-        # Execute the request
-        response = RestClient::Request.execute(method: method, url: url, payload: data.to_json, headers: headers)
-        
-        # Parse and return the response body
-        JSON.parse(response.body)
-      rescue RestClient::ExceptionWithResponse => e
-        error_msg = 'No error message'
-        # Parse the error message from the API response if there is a response
-        error_msg = JSON.parse(e.response.body)['error']['message'] if e.response
-        
-        # Raise an exception with the API error message
-        raise RestClient::ExceptionWithResponse.new("#{e.message}: #{error_msg} (#{e.http_code})"), nil, e.backtrace
+
+    def request_api(url, data)
+      response = RestClient::Request.execute(
+        method: :post,
+        url: url,
+        payload: data.to_json,
+        headers: {
+          'Authorization' => "Bearer #{@api_key}",
+          'Content-Type' => 'application/json'
+        },
+        timeout: @config.request_timeout
+      )
+      JSON.parse(response.body)
+    rescue RestClient::ExceptionWithResponse => e
+      handle_error(e)
+    end
+
+    def handle_error(error)
+      error_response = JSON.parse(error.response.body)
+      error_message = error_response['error']['message']
+      status_code = error.response.code
+      
+      case status_code
+      when 401
+        raise ChatGPT::AuthenticationError.new(error_message, status_code)
+      when 429
+        raise ChatGPT::RateLimitError.new(error_message, status_code)
+      when 400
+        raise ChatGPT::InvalidRequestError.new(error_message, status_code)
+      else
+        raise ChatGPT::APIError.new(error_message, status_code)
       end
     end
-  
+
+    def request_streaming(url, data)
+      RestClient::Request.execute(  # Remove the response = assignment
+        method: :post,
+        url: url,
+        payload: data.to_json,
+        headers: {
+          'Authorization' => "Bearer #{@api_key}",
+          'Content-Type' => 'application/json'
+        },
+        timeout: @config.request_timeout,
+        stream_to_buffer: true
+      ) do |chunk, _x, _z|
+        if chunk.include?("data: ")
+          chunk.split("\n").each do |line|
+            if line.start_with?("data: ")
+              data = line.sub(/^data: /, '')
+              next if data.strip == "[DONE]"
+              
+              begin
+                parsed = JSON.parse(data)
+                yield parsed if block_given?
+              rescue JSON::ParserError
+                next
+              end
+            end
+          end
+        end
+      end
+    rescue RestClient::ExceptionWithResponse => e
+      handle_error(e)
+    end
   end
 end
