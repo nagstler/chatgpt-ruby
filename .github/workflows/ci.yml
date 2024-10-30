@@ -20,16 +20,18 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby-version }}
-        bundler-cache: true # This will cache installed gems
+        bundler-cache: true
 
-    - name: Install dependencies
-      run: bundle install
+    - name: Update bundle platforms
+      run: |
+        bundle lock --add-platform x86_64-linux
+        bundle lock --add-platform ruby
+        bundle install --jobs 4
 
     - name: Run tests
       run: bundle exec rake test
       env:
         COVERAGE: true
-        # Using a dummy API key since all API calls are mocked
         CHATGPT_API_KEY: 'test-key'
 
     - name: Publish code coverage

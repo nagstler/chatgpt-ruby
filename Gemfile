@@ -1,21 +1,21 @@
-# frozen_string_literal: true
-
-source 'https://rubygems.org'
+# Gemfile
+source "https://rubygems.org"
 
 # Specify your gem's dependencies in chatgpt-ruby.gemspec
 gemspec
 
-gem 'rake', '~> 13.0'
+# Development dependencies
+gem "rake", "~> 13.0"
+gem "minitest", "~> 5.0"
+gem "rubocop", "~> 1.21"
 
-gem 'minitest', '~> 5.0'
-
-gem 'rubocop', '~> 1.21'
-
-gem 'rest-client'
-
-# Gemfile
 group :test do
-  gem 'simplecov'
-  gem 'simplecov_json_formatter'
+  gem 'simplecov', require: false
+  gem 'simplecov_json_formatter', require: false
   gem 'webmock'
+end
+
+# Platform specific gems
+platforms :ruby, :mri, :mingw, :x64_mingw do
+  gem 'rest-client'
 end
