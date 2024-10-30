@@ -8,6 +8,8 @@
 
 A comprehensive Ruby SDK for OpenAI's GPT APIs, providing a robust, feature-rich interface for AI-powered applications.
 
+📚 [Check out the Integration Guide](https://github.com/nagstler/chatgpt-ruby/wiki) to get started!
+
 ## Features
 
 - 🚀 Full support for GPT-3.5-Turbo and GPT-4 models
