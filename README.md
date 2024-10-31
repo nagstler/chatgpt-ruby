@@ -6,7 +6,7 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/08c7e7b58e9fbe7156eb/test_coverage)](https://codeclimate.com/github/nagstler/chatgpt-ruby/test_coverage)
 [![CI](https://github.com/nagstler/chatgpt-ruby/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/nagstler/chatgpt-ruby/actions/workflows/ci.yml)
 
-A comprehensive Ruby SDK for OpenAI's GPT APIs, providing a robust, feature-rich interface for AI-powered applications.
+🤖💎 A comprehensive Ruby SDK for OpenAI's GPT APIs, providing a robust, feature-rich interface for AI-powered applications.
 
 📚 [Check out the Integration Guide](https://github.com/nagstler/chatgpt-ruby/wiki) to get started!
 
@@ -64,25 +64,31 @@ $ gem install chatgpt-ruby
 require 'chatgpt'
 
 # Initialize with API key
-client = ChatGPT::Client.new(api_key: 'your-api-key')
+client = ChatGPT::Client.new(ENV['OPENAI_API_KEY'])
 
 # Simple chat completion
-response = client.chat(messages: [
+response = client.chat([
   { role: "user", content: "What is Ruby?" }
 ])
 
-puts response.content
+puts response.dig("choices", 0, "message", "content")
 ```
 
 ## Configuration
 
 ```ruby
 ChatGPT.configure do |config|
-  config.api_key = 'your-api-key'
-  config.default_model = 'gpt-4'
-  config.timeout = 30
+  config.api_key = ENV['OPENAI_API_KEY']
+  config.api_version = 'v1'
+  config.default_engine = 'gpt-3.5-turbo'
+  config.request_timeout = 30
   config.max_retries = 3
-  config.api_version = '2024-01'
+  config.default_parameters = {
+    max_tokens: 16,
+    temperature: 0.5,
+    top_p: 1.0,
+    n: 1
+  }
 end
 ```
 
@@ -91,15 +97,17 @@ end
 ### Chat Completions
 
 ```ruby
-# Basic chat
-client.chat(messages: [
+# Chat with system message
+response = client.chat([
   { role: "system", content: "You are a helpful assistant." },
   { role: "user", content: "Hello!" }
 ])
 
 # With streaming
-client.chat_stream(messages: [...]) do |chunk|
-  print chunk.content
+client.chat_stream([
+  { role: "user", content: "Tell me a story" }
+]) do |chunk|
+  print chunk.dig("choices", 0, "delta", "content")
 end
 ```
 
