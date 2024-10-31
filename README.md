@@ -66,12 +66,17 @@ require 'chatgpt'
 # Initialize with API key
 client = ChatGPT::Client.new(ENV['OPENAI_API_KEY'])
 
-# Simple chat completion
+# Chat API (Recommended for GPT-3.5-turbo, GPT-4)
 response = client.chat([
   { role: "user", content: "What is Ruby?" }
 ])
 
 puts response.dig("choices", 0, "message", "content")
+
+# Completions API (For GPT-3.5-turbo-instruct)
+response = client.completions("What is Ruby?")
+puts response.dig("choices", 0, "text")
+
 ```
 
 ## Configuration
