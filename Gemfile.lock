@@ -36,7 +36,7 @@ GEM
       ast (~> 2.4.1)
     public_suffix (6.0.1)
     rainbow (3.1.1)
-    rake (13.0.6)
+    rake (13.2.1)
     regexp_parser (2.7.0)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
@@ -85,7 +85,7 @@ DEPENDENCIES
   bundler-audit (~> 0.9)
   chatgpt-ruby!
   minitest (~> 5.0)
-  rake (~> 13.0)
+  rake (~> 13.2)
   rubocop (~> 1.21)
   simplecov
   simplecov_json_formatter
