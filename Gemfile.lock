@@ -29,7 +29,7 @@ GEM
     mime-types (3.4.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2023.0218.1)
-    minitest (5.18.0)
+    minitest (5.25.2)
     netrc (0.11.0)
     parallel (1.22.1)
     parser (3.2.1.1)
@@ -84,7 +84,7 @@ DEPENDENCIES
   brakeman (~> 5.2)
   bundler-audit (~> 0.9)
   chatgpt-ruby!
-  minitest (~> 5.0)
+  minitest (~> 5.25)
   rake (~> 13.0)
   rubocop (~> 1.21)
   simplecov
