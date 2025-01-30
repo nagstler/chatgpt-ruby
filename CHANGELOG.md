@@ -1,3 +1,17 @@
+## [2.1.0] - 2025-01-30
+
+### Changed
+- Updated model support for GPT-3.5-turbo and GPT-3.5-turbo-instruct
+- Fixed configuration module
+- Improved error handling
+- Updated documentation and Wiki
+
+### Added
+- Support for chat and completions APIs
+- Streaming support
+- Comprehensive test coverage
+- Better error classification
+
 ## [2.0.0] - 2023-07-08
 
 ### Added
