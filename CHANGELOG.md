@@ -1,3 +1,9 @@
+## [2.1.1] - 2024-04-19
+
+### Fixed
+- Use configured default_engine in chat methods instead of hardcoded 'gpt-3.5-turbo'
+- Add Rails integration with proper Railtie for automatic GPT inflection
+
 ## [2.1.0] - 2025-01-30
 
 ### Changed
