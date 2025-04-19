@@ -31,7 +31,7 @@ module ChatGPT
       url = "#{@endpoint}/chat/completions"
 
       data = @config.default_parameters.merge(
-        model: params[:model] || 'gpt-3.5-turbo',
+        model: params[:model] || @config.default_engine, # Use configured default_engine
         messages: messages,
         temperature: params[:temperature],
         top_p: params[:top_p],
@@ -47,7 +47,7 @@ module ChatGPT
 
       url = "#{@endpoint}/chat/completions"
       data = @config.default_parameters.merge(
-        model: params[:model] || 'gpt-3.5-turbo',
+        model: params[:model] || @config.default_engine,  # Use configured default_engine
         messages: messages,
         stream: true
       ).compact
