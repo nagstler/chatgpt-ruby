@@ -6,6 +6,9 @@ require_relative 'chatgpt/errors'
 require_relative 'chatgpt/configuration'
 require_relative 'chatgpt/client'
 
+# Automatically load Railtie when used with Rails
+require_relative 'chatgpt/railtie' if defined?(Rails)
+
 module ChatGPT
   class << self
     def configuration
