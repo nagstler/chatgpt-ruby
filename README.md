@@ -2,27 +2,19 @@
 
 <a href="https://badge.fury.io/rb/chatgpt-ruby"><img src="https://img.shields.io/gem/v/chatgpt-ruby?style=for-the-badge" alt="Gem Version"></a>
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License"></a>
-<a href="https://codeclimate.com/github/nagstler/chatgpt-ruby/maintainability"><img src="https://img.shields.io/codeclimate/maintainability/nagstler/chatgpt-ruby?style=for-the-badge" alt="Maintainability"></a>
 <a href="https://codeclimate.com/github/nagstler/chatgpt-ruby/test_coverage"><img src="https://img.shields.io/codeclimate/coverage/nagstler/chatgpt-ruby?style=for-the-badge" alt="Test Coverage"></a>
 <a href="https://github.com/nagstler/chatgpt-ruby/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/nagstler/chatgpt-ruby/ci.yml?branch=main&style=for-the-badge" alt="CI"></a>
 <a href="https://github.com/nagstler/chatgpt-ruby/stargazers"><img src="https://img.shields.io/github/stars/nagstler/chatgpt-ruby?style=for-the-badge" alt="GitHub stars"></a>
 
-🤖💎 A comprehensive Ruby SDK for OpenAI's GPT APIs, providing a robust, feature-rich interface for AI-powered applications.
-
-📚 [Check out the Integration Guide](https://github.com/nagstler/chatgpt-ruby/wiki) to get started!
+🤖💎 A lightweight Ruby wrapper for the OpenAI API, designed for simplicity and ease of integration.
 
 ## Features
 
-- 🚀 Full support for GPT-3.5-Turbo and GPT-4 models
-- 📡 Streaming responses support
-- 🔧 Function calling and JSON mode
-- 🎨 DALL-E image generation
-- 🔄 Fine-tuning capabilities
-- 📊 Token counting and validation
-- ⚡ Async operations support
-- 🛡️ Built-in rate limiting and retries
-- 🎯 Type-safe responses
-- 📝 Comprehensive logging
+- API integration for chat completions and text completions
+- Streaming capability for handling real-time response chunks
+- Custom exception classes for different API error types
+- Configurable timeout, retries and default parameters
+- Complete test suite with mocked API responses
 
 ## Table of Contents
 
@@ -30,17 +22,12 @@
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Configuration](#configuration)
-- [Core Features](#core-features)
+- [Rails Integration](#rails-integration)
+- [Error Handling](#error-handling)
+- [Current Capabilities](#current-capabilities)
   - [Chat Completions](#chat-completions)
-  - [Function Calling](#function-calling)
-  - [Image Generation (DALL-E)](#image-generation-dall-e)
-  - [Fine-tuning](#fine-tuning)
-  - [Token Management](#token-management)
-  - [Error Handling](#error-handling)
-- [Advanced Usage](#advanced-usage)
-  - [Async Operations](#async-operations)
-  - [Batch Operations](#batch-operations)
-  - [Response Objects](#response-objects)
+  - [Text Completions](#text-completions)
+- [Roadmap](#roadmap)
 - [Development](#development)
 - [Contributing](#contributing)
 - [License](#license)
@@ -80,6 +67,45 @@ puts response.dig("choices", 0, "text")
 
 ```
 
+## Rails Integration
+
+In a Rails application, create an initializer:
+
+```ruby
+# config/initializers/chat_gpt.rb
+require 'chatgpt'
+
+ChatGPT.configure do |config|
+  config.api_key = Rails.application.credentials.openai[:api_key]
+  config.default_engine = 'gpt-3.5-turbo'
+  config.request_timeout = 30
+end
+```
+Then use it in your controllers or services:
+
+```ruby
+# app/services/chat_gpt_service.rb
+class ChatGPTService
+  def initialize
+    @client = ChatGPT::Client.new
+  end
+  
+  def ask_question(question)
+    response = @client.chat([
+      { role: "user", content: question }
+    ])
+    
+    response.dig("choices", 0, "message", "content")
+  end
+end
+
+# Usage in controller
+def show
+  service = ChatGPTService.new
+  @response = service.ask_question("Tell me about Ruby on Rails")
+end
+```
+
 ## Configuration
 
 ```ruby
@@ -98,137 +124,56 @@ ChatGPT.configure do |config|
 end
 ```
 
-## Core Features
-
-### Chat Completions
+## Error handling
 
 ```ruby
-# Chat with system message
+begin
+  response = client.chat([
+    { role: "user", content: "Hello!" }
+  ])
+rescue ChatGPT::AuthenticationError => e
+  puts "Authentication error: #{e.message}"
+rescue ChatGPT::RateLimitError => e
+  puts "Rate limit hit: #{e.message}"
+rescue ChatGPT::InvalidRequestError => e
+  puts "Bad request: #{e.message}"
+rescue ChatGPT::APIError => e
+  puts "API error: #{e.message}"
+end
+```
+
+## Current Capabilities
+
+### Chat Completions
+```ruby
+# Basic chat
 response = client.chat([
-  { role: "system", content: "You are a helpful assistant." },
-  { role: "user", content: "Hello!" }
+  { role: "user", content: "What is Ruby?" }
 ])
 
 # With streaming
-client.chat_stream([
-  { role: "user", content: "Tell me a story" }
-]) do |chunk|
+client.chat_stream([{ role: "user", content: "Tell me a story" }]) do |chunk|
   print chunk.dig("choices", 0, "delta", "content")
 end
 ```
 
-### Function Calling
-
+### Text Completions
 ```ruby
-functions = [
-  {
-    name: "get_weather",
-    description: "Get current weather",
-    parameters: {
-      type: "object",
-      properties: {
-        location: { type: "string" },
-        unit: { type: "string", enum: ["celsius", "fahrenheit"] }
-      }
-    }
-  }
-]
-
-response = client.chat(
-  messages: [{ role: "user", content: "What's the weather in London?" }],
-  functions: functions,
-  function_call: "auto"
-)
+# Basic completion with GPT-3.5-turbo-instruct
+response = client.completions("What is Ruby?")
+puts response.dig("choices", 0, "text")
 ```
 
-### Image Generation (DALL-E)
+## Roadmap
 
-```ruby
-# Generate image
-image = client.images.generate(
-  prompt: "A sunset over mountains",
-  size: "1024x1024",
-  quality: "hd"
-)
+While ChatGPT Ruby is functional, there are several areas planned for improvement:
 
-# Create variations
-variation = client.images.create_variation(
-  image: File.read("input.png"),
-  n: 1
-)
-```
+- [ ] Response object wrapper & Rails integration with Railtie (v2.2)
+- [ ] Token counting, function calling, and rate limiting (v2.3)
+- [ ] Batch operations and async support (v3.0)
+- [ ] DALL-E image generation and fine-tuning (Future)
 
-### Fine-tuning
-
-```ruby
-# Create fine-tuning job
-job = client.fine_tunes.create(
-  training_file: "file-abc123",
-  model: "gpt-3.5-turbo"
-)
-
-# List fine-tuning jobs
-jobs = client.fine_tunes.list
-
-# Get job status
-status = client.fine_tunes.retrieve(job.id)
-```
-
-### Token Management
-
-```ruby
-# Count tokens
-count = client.tokens.count("Your text here", model: "gpt-4")
-
-# Validate token limits
-client.tokens.validate_messages(messages, max_tokens: 4000)
-```
-
-### Error Handling
-
-```ruby
-begin
-  response = client.chat(messages: [...])
-rescue ChatGPT::RateLimitError => e
-  puts "Rate limit hit: #{e.message}"
-rescue ChatGPT::APIError => e
-  puts "API error: #{e.message}"
-rescue ChatGPT::TokenLimitError => e
-  puts "Token limit exceeded: #{e.message}"
-end
-```
-
-## Advanced Usage
-
-### Async Operations
-
-```ruby
-client.async do
-  response1 = client.chat(messages: [...])
-  response2 = client.chat(messages: [...])
-  [response1, response2]
-end
-```
-
-### Batch Operations
-
-```ruby
-responses = client.batch do |batch|
-  batch.add_chat(messages: [...])
-  batch.add_chat(messages: [...])
-end
-```
-
-### Response Objects
-
-```ruby
-response = client.chat(messages: [...])
-
-response.content  # Main response content
-response.usage   # Token usage information
-response.finish_reason  # Why the response ended
-response.model   # Model used
-```
+❤️ Contributions in any of these areas are welcome!
 
 ## Development
 
