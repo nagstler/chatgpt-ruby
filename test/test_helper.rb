@@ -39,7 +39,7 @@ module TestHelpers
       'id' => 'cmpl-123',
       'object' => 'text_completion',
       'created' => Time.now.to_i,
-      'model' => params[:engine] || 'text-davinci-002',
+      'model' => params[:engine] || 'gpt-4o-mini',
       'choices' => choices,
       'usage' => {
         'prompt_tokens' => 10,

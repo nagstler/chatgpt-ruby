@@ -8,7 +8,7 @@ module ChatGPT
 
     def initialize
       @api_version = 'v1'
-      @default_engine = 'text-davinci-002'
+      @default_engine = 'gpt-4o-mini'
       @request_timeout = 30
       @max_retries = 3
       @default_parameters = {

@@ -28,7 +28,7 @@ class TestChatGPTConfiguration < Minitest::Test
     config = ChatGPT.configuration
 
     assert_equal 'v1', config.api_version
-    assert_equal 'text-davinci-002', config.default_engine
+    assert_equal 'gpt-4o-mini', config.default_engine
     assert_equal 30, config.request_timeout
     assert_equal 3, config.max_retries
     assert_kind_of Hash, config.default_parameters
