@@ -104,7 +104,7 @@ module ChatGPT
 
     def request_streaming(url, data)
       RestClient::Request.execute(request_options(url, data)) do |chunk, _x, _z|
-        chunk.split("\n").filter { |c| c.start_with?('data:')}.each do |line|
+        chunk.split("\n").filter { |c| c.start_with?('data:') }.each do |line|
           data = line.sub(/^data: /, '')
           next if data.strip == '[DONE]'
 
@@ -115,7 +115,6 @@ module ChatGPT
             next
           end
         end
-
       end
     rescue RestClient::ExceptionWithResponse => e
       handle_error(e)
