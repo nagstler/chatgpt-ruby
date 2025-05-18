@@ -91,8 +91,7 @@ module ChatGPT
     end
 
     def request_options(url, data)
-      {
-        headers: {
+      { headers: {
           'Authorization' => "Bearer #{@api_key}",
           'Content-Type' => 'application/json'
         },
@@ -100,28 +99,23 @@ module ChatGPT
         payload: data.to_json,
         stream_to_buffer: true,
         timeout: @config.request_timeout,
-        url: url,
-      }
+        url: url }
     end
 
     def request_streaming(url, data)
-      # Remove the response = assignment
       RestClient::Request.execute(request_options(url, data)) do |chunk, _x, _z|
-        if chunk.include?('data: ')
-          chunk.split("\n").each do |line|
-            next unless line.start_with?('data: ')
+        chunk.split("\n").filter { |c| c.start_with?('data:')}.each do |line|
+          data = line.sub(/^data: /, '')
+          next if data.strip == '[DONE]'
 
-            data = line.sub(/^data: /, '')
-            next if data.strip == '[DONE]'
-
-            begin
-              parsed = JSON.parse(data)
-              yield parsed if block_given?
-            rescue JSON::ParserError
-              next
-            end
+          begin
+            parsed = JSON.parse(data)
+            yield parsed if block_given?
+          rescue JSON::ParserError
+            next
           end
         end
+
       end
     rescue RestClient::ExceptionWithResponse => e
       handle_error(e)
