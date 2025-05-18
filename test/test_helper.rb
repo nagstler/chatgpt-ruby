@@ -25,39 +25,30 @@ $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 require 'chatgpt'
 
 module TestHelpers
-  def mock_chat_response(params, choices)
+  def mock_response(choices:, id:, obj:, model:, usage: nil)
+    usage ||= { 'prompt_tokens' => 10, 'completion_tokens' => 20, 'total_tokens' => 30 }
     {
-      'id' => 'chatcmpl-123',
-      'object' => 'chat.completion',
-      'created' => Time.now.to_i,
-      'model' => params[:model] || 'gpt-3.5-turbo',
       'choices' => choices,
-      'usage' => { 'prompt_tokens' => 10, 'completion_tokens' => 20, 'total_tokens' => 30 }
-    }
-  end
-
-  def mock_completions_response(params, choices)
-    {
-      'id' => 'cmpl-123',
-      'object' => 'text_completion',
       'created' => Time.now.to_i,
-      'model' => params[:engine] || 'gpt-4o-mini',
-      'choices' => choices,
-      'usage' => { 'prompt_tokens' => 10, 'completion_tokens' => 20, 'total_tokens' => 30 }
+      'id' => id,
+      'model' => model,
+      'object' => obj,
+      'usage' => usage
     }
   end
 
   def stub_completions_request(params = {})
     n = params[:n] || 1
     choices = Array.new(n) do |i|
-      {
-        'index' => i,
-        'finish_reason' => 'stop',
-        'text' => "Sample response #{i + 1}"
-      }
+      { 'finish_reason' => 'stop', 'index' => i, 'text' => "Sample response #{i + 1}" }
     end
 
-    response_body = mock_completions_response(params, choices)
+    response_body = mock_response(
+      id: 'cmpl-123',
+      obj: 'text_completion',
+      model: params[:engine] || 'gpt-4o-mini',
+      choices: choices
+    )
 
     stub_request(:post, %r{https://api\.openai\.com/v1/engines/.*/completions})
       .with(headers: { 'Authorization' => "Bearer #{@api_key}" })
@@ -91,7 +82,12 @@ module TestHelpers
       'message' => { 'role' => 'assistant', 'content' => 'Hello! How can I help you today?' }
     }]
 
-    response_body = mock_chat_response(params, choices)
+    response_body = mock_response(
+      choices: choices,
+      id: 'chatcmpl-123',
+      obj: 'chat.completion',
+      model: params[:model] || 'gpt-3.5-turbo'
+    )
 
     stub_request(:post, 'https://api.openai.com/v1/chat/completions')
       .with(headers: { 'Authorization' => "Bearer #{@api_key}" })
