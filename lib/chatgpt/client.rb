@@ -47,7 +47,7 @@ module ChatGPT
 
       url = "#{@endpoint}/chat/completions"
       data = @config.default_parameters.merge(
-        model: params[:model] || @config.default_engine,  # Use configured default_engine
+        model: params[:model] || @config.default_engine, # Use configured default_engine
         messages: messages,
         stream: true
       ).compact
@@ -90,18 +90,23 @@ module ChatGPT
       end
     end
 
-    def request_streaming(url, data)
-      RestClient::Request.execute(  # Remove the response = assignment
-        method: :post,
-        url: url,
-        payload: data.to_json,
+    def request_options(url, data)
+      {
         headers: {
           'Authorization' => "Bearer #{@api_key}",
           'Content-Type' => 'application/json'
         },
+        method: :post,
+        payload: data.to_json,
+        stream_to_buffer: true,
         timeout: @config.request_timeout,
-        stream_to_buffer: true
-      ) do |chunk, _x, _z|
+        url: url,
+      }
+    end
+
+    def request_streaming(url, data)
+      # Remove the response = assignment
+      RestClient::Request.execute(request_options(url, data)) do |chunk, _x, _z|
         if chunk.include?('data: ')
           chunk.split("\n").each do |line|
             next unless line.start_with?('data: ')
