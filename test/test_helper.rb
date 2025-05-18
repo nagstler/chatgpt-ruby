@@ -25,7 +25,7 @@ $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 require 'chatgpt'
 
 module TestHelpers
-  def mock_response(choices:, id:, obj:, model:, usage: nil)
+  def mock_response_body(choices:, id:, obj:, model:, usage: nil)
     usage ||= { 'prompt_tokens' => 10, 'completion_tokens' => 20, 'total_tokens' => 30 }
     {
       'choices' => choices,
@@ -43,7 +43,7 @@ module TestHelpers
       { 'finish_reason' => 'stop', 'index' => i, 'text' => "Sample response #{i + 1}" }
     end
 
-    response_body = mock_response(
+    response_body = mock_response_body(
       id: 'cmpl-123',
       obj: 'text_completion',
       model: params[:engine] || 'gpt-4o-mini',
@@ -82,7 +82,7 @@ module TestHelpers
       'message' => { 'role' => 'assistant', 'content' => 'Hello! How can I help you today?' }
     }]
 
-    response_body = mock_response(
+    response_body = mock_response_body(
       choices: choices,
       id: 'chatcmpl-123',
       obj: 'chat.completion',
