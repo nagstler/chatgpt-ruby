@@ -21,7 +21,7 @@ class TestChatGPTCompletionsIntegration < Minitest::Test
   def test_completions_with_custom_params
     stub_completions_request(n: 2)
     custom_params = {
-      engine: 'text-davinci-002',
+      engine: 'gpt-4o-mini',
       max_tokens: 10,
       temperature: 0.7,
       top_p: 0.9,

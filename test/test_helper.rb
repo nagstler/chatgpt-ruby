@@ -25,28 +25,30 @@ $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 require 'chatgpt'
 
 module TestHelpers
+  def mock_response_body(choices:, id:, obj:, model:, usage: nil)
+    usage ||= { 'prompt_tokens' => 10, 'completion_tokens' => 20, 'total_tokens' => 30 }
+    {
+      'choices' => choices,
+      'created' => Time.now.to_i,
+      'id' => id,
+      'model' => model,
+      'object' => obj,
+      'usage' => usage
+    }
+  end
+
   def stub_completions_request(params = {})
     n = params[:n] || 1
     choices = Array.new(n) do |i|
-      {
-        'text' => "Sample response #{i + 1}",
-        'index' => i,
-        'finish_reason' => 'stop'
-      }
+      { 'finish_reason' => 'stop', 'index' => i, 'text' => "Sample response #{i + 1}" }
     end
 
-    response_body = {
-      'id' => 'cmpl-123',
-      'object' => 'text_completion',
-      'created' => Time.now.to_i,
-      'model' => params[:engine] || 'text-davinci-002',
-      'choices' => choices,
-      'usage' => {
-        'prompt_tokens' => 10,
-        'completion_tokens' => 20,
-        'total_tokens' => 30
-      }
-    }
+    response_body = mock_response_body(
+      id: 'cmpl-123',
+      obj: 'text_completion',
+      model: params[:engine] || 'gpt-4o-mini',
+      choices: choices
+    )
 
     stub_request(:post, %r{https://api\.openai\.com/v1/engines/.*/completions})
       .with(headers: { 'Authorization' => "Bearer #{@api_key}" })
@@ -74,27 +76,18 @@ module TestHelpers
   end
 
   def stub_chat_request(params = {})
-    response_body = {
-      'id' => 'chatcmpl-123',
-      'object' => 'chat.completion',
-      'created' => Time.now.to_i,
-      'model' => params[:model] || 'gpt-3.5-turbo',
-      'choices' => [
-        {
-          'message' => {
-            'role' => 'assistant',
-            'content' => 'Hello! How can I help you today?'
-          },
-          'finish_reason' => 'stop',
-          'index' => 0
-        }
-      ],
-      'usage' => {
-        'prompt_tokens' => 10,
-        'completion_tokens' => 20,
-        'total_tokens' => 30
-      }
-    }
+    choices = [{
+      'finish_reason' => 'stop',
+      'index' => 0,
+      'message' => { 'role' => 'assistant', 'content' => 'Hello! How can I help you today?' }
+    }]
+
+    response_body = mock_response_body(
+      choices: choices,
+      id: 'chatcmpl-123',
+      obj: 'chat.completion',
+      model: params[:model] || 'gpt-3.5-turbo'
+    )
 
     stub_request(:post, 'https://api.openai.com/v1/chat/completions')
       .with(headers: { 'Authorization' => "Bearer #{@api_key}" })
@@ -117,7 +110,7 @@ module TestHelpers
       .with(headers: { 'Authorization' => "Bearer #{@api_key}" })
       .to_return(
         status: 200,
-        body: chunks.map { |chunk| "data: #{chunk.to_json}\n\n" }.join + "data: [DONE]\n\n",
+        body: "#{chunks.map { |chunk| "data: #{chunk.to_json}\n\n" }.join}data: [DONE]\n\n",
         headers: { 'Content-Type' => 'text/event-stream' }
       )
   end

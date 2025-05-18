@@ -47,7 +47,7 @@ module ChatGPT
 
       url = "#{@endpoint}/chat/completions"
       data = @config.default_parameters.merge(
-        model: params[:model] || @config.default_engine,  # Use configured default_engine
+        model: params[:model] || @config.default_engine, # Use configured default_engine
         messages: messages,
         stream: true
       ).compact
@@ -90,31 +90,29 @@ module ChatGPT
       end
     end
 
-    def request_streaming(url, data)
-      RestClient::Request.execute(  # Remove the response = assignment
-        method: :post,
-        url: url,
-        payload: data.to_json,
-        headers: {
+    def request_options(url, data)
+      { headers: {
           'Authorization' => "Bearer #{@api_key}",
           'Content-Type' => 'application/json'
         },
+        method: :post,
+        payload: data.to_json,
+        stream_to_buffer: true,
         timeout: @config.request_timeout,
-        stream_to_buffer: true
-      ) do |chunk, _x, _z|
-        if chunk.include?('data: ')
-          chunk.split("\n").each do |line|
-            next unless line.start_with?('data: ')
+        url: url }
+    end
 
-            data = line.sub(/^data: /, '')
-            next if data.strip == '[DONE]'
+    def request_streaming(url, data)
+      RestClient::Request.execute(request_options(url, data)) do |chunk, _x, _z|
+        chunk.split("\n").filter { |c| c.start_with?('data:') }.each do |line|
+          data = line.sub(/^data: /, '')
+          next if data.strip == '[DONE]'
 
-            begin
-              parsed = JSON.parse(data)
-              yield parsed if block_given?
-            rescue JSON::ParserError
-              next
-            end
+          begin
+            parsed = JSON.parse(data)
+            yield parsed if block_given?
+          rescue JSON::ParserError
+            next
           end
         end
       end

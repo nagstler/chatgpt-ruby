@@ -50,7 +50,7 @@ class TestChatGPTChatIntegration < Minitest::Test
     end
 
     assert chunks.length.positive?
-    assert chunks.all? { |c| c['choices'][0]['delta'] }
+    assert(chunks.all? { |c| c.dig('choices', 0, 'delta') })
   end
 
   def test_chat_with_invalid_messages
